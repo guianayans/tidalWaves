@@ -1,0 +1,62 @@
+# Template Coolify + Traefik — substituir __APP_*__ antes do deploy
+# Referência: server-app-base/INSTRUCOES-PARA-IA.md
+
+services:
+  __APP_SLUG__:
+    container_name: __APP_SLUG__
+    build:
+      context: /pendriver/__APP_DIR__
+      dockerfile: Dockerfile
+    image: __APP_SLUG__-local:latest
+    pull_policy: build
+    working_dir: /app
+    volumes:
+      - /pendriver/__APP_DIR__:/app
+      - __APP_SLUG___node_modules:/app/node_modules
+      # Descomente se o app precisar navegar no disco do host:
+      # - /:/host
+    environment:
+      NODE_ENV: production
+      PORT: "__APP_PORT__"
+      # Adicione variáveis do app abaixo (referenciar ${VAR} do Coolify/.env)
+      # __APP_PREFIX___PASSWORD: ${__APP_PREFIX___PASSWORD}
+      # __APP_PREFIX___SESSION_SECRET: ${__APP_PREFIX___SESSION_SECRET}
+      # __APP_PREFIX___HIST_DIR: /host/pendriver/__APP_DIR___hist
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - '-e'
+        - "require('http').get('http://127.0.0.1:__APP_PORT__/health',r=>process.exit(r.statusCode>=200&&r.statusCode<500?0:1)).on('error',()=>process.exit(1));"
+      interval: 20s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+    networks:
+      - coolify
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    labels:
+      - traefik.enable=true
+      - 'traefik.http.routers.__APP_SLUG__.rule=Host(`__APP_DOMAIN__`) || Host(`www.__APP_DOMAIN__`)'
+      - traefik.http.routers.__APP_SLUG__.entrypoints=https
+      - traefik.http.services.__APP_SLUG__.loadbalancer.server.port=__APP_PORT__
+      - 'traefik.http.routers.__APP_SLUG__.middlewares=__APP_SLUG__-sec'
+      - traefik.http.middlewares.__APP_SLUG__-sec.headers.forceSTSHeader=true
+      - traefik.http.middlewares.__APP_SLUG__-sec.headers.stsSeconds=31536000
+      - traefik.http.middlewares.__APP_SLUG__-sec.headers.stsIncludeSubdomains=true
+      - traefik.http.middlewares.__APP_SLUG__-sec.headers.stsPreload=true
+      - traefik.http.middlewares.__APP_SLUG__-sec.headers.contentTypeNosniff=true
+      - traefik.http.middlewares.__APP_SLUG__-sec.headers.referrerPolicy=strict-origin-when-cross-origin
+      - traefik.http.middlewares.__APP_SLUG__-sec.headers.customResponseHeaders.X-Frame-Options=SAMEORIGIN
+      - traefik.http.middlewares.__APP_SLUG__-sec.headers.customResponseHeaders.Cross-Origin-Resource-Policy=same-site
+      - 'traefik.http.middlewares.__APP_SLUG__-sec.headers.customResponseHeaders.Permissions-Policy=camera=(), microphone=(), geolocation=()'
+
+volumes:
+  __APP_SLUG___node_modules: null
+
+networks:
+  coolify:
+    external: true
