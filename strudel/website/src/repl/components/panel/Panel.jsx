@@ -15,6 +15,7 @@ import { WelcomeTab } from './WelcomeTab';
 import { ProjectsPanel } from '../tidalwaves/ProjectsPanel.jsx';
 import { SaveButton } from '../tidalwaves/SaveButton.jsx';
 import { RecordButton } from '../tidalwaves/RecordButton.jsx';
+import { AutoEvaluateToggle } from '../tidalwaves/AutoEvaluateToggle.jsx';
 
 const TAURI = typeof window !== 'undefined' && window.__TAURI__;
 
@@ -157,6 +158,7 @@ function MainMenu({ context, isEmbedded = false, className }) {
       )}
       {!isEmbedded && <SaveButton context={context} />}
       {!isEmbedded && <RecordButton context={context} />}
+      {!isEmbedded && <AutoEvaluateToggle context={context} />}
       {!isEmbedded && (
         <a
           title="learn"

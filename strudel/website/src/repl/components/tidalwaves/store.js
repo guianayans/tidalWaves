@@ -10,3 +10,9 @@ export function setCurrentProject(id, name) {
   currentProjectId.set(id || '');
   currentProjectName.set(name || '');
 }
+
+// Whether the pattern should re-evaluate automatically shortly after the user
+// stops typing, instead of requiring an explicit "update"/Ctrl+Enter.
+export const autoEvaluateEnabled = persistentAtom('tidalwaves-auto-evaluate', 'false');
+
+export const isAutoEvaluateEnabled = (value) => value === 'true';
