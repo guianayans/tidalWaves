@@ -8,12 +8,12 @@ services:
   tidalwaves:
     container_name: tidalwaves
     build:
-      context: /pendriver/tidalwaves
+      context: /pendriver/tidalWaves
       dockerfile: Dockerfile
     image: tidalwaves-local:latest
     pull_policy: build
     volumes:
-      - /pendriver/tidalwaves_hist:/data
+      - /pendriver/tidalWaves_hist:/data
     environment:
       NODE_ENV: production
       PORT: "4025"

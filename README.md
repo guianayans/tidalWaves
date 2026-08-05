@@ -14,10 +14,10 @@ TIDALWAVES_DATA_DIR=./data PORT=4025 node server/src/index.js
 
 ## Deploy (Coolify)
 
-1. `git push`/`rsync` deste repo para `/pendriver/tidalwaves` no servidor.
+1. `git push`/`rsync` deste repo para `/pendriver/tidalWaves` no servidor.
 2. Criar o app no Coolify apontando pra esse diretório (usa `docker-compose.yml` já preenchido: slug `tidalwaves`, porta `4025`, domínio `tidalwaves.gvtserver.online`).
 3. Configurar DNS de `tidalwaves.gvtserver.online` apontando pro servidor.
-4. Deploy — o healthcheck bate em `/health`; dados (SQLite + gravações) persistem em `/pendriver/tidalwaves_hist` (volume `/data`).
+4. Deploy — o healthcheck bate em `/health`; dados (SQLite + gravações) persistem em `/pendriver/tidalWaves_hist` (volume `/data`).
 
 ## Estrutura
 
