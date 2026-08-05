@@ -11,6 +11,13 @@ onlyBuiltDependencies:
   - tree-sitter
   - tree-sitter-haskell
 
+# @serialport/bindings-cpp is a native serial-port binding pulled in transitively
+# (hardware MIDI/serial features); not needed for the web build, so its build
+# script is explicitly denied instead of left "ignored" (which recent pnpm
+# versions treat as a hard failure in non-interactive/CI installs).
+ignoredBuiltDependencies:
+  - '@serialport/bindings-cpp'
+
 catalog:
   "@codemirror/commands": "^6.8.0"
   "@codemirror/language": "^6.10.8"

@@ -6,7 +6,7 @@ FROM node:22-slim AS strudel-build
 RUN apt-get update \
   && apt-get install -y --no-install-recommends python3 make g++ git \
   && rm -rf /var/lib/apt/lists/*
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10.19.0
 WORKDIR /build
 COPY strudel/pnpm-workspace.yaml strudel/package.json strudel/pnpm-lock.yaml ./
 COPY strudel/packages/ ./packages/
