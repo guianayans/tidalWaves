@@ -12,6 +12,9 @@ import { Reference } from './Reference';
 import { SettingsTab } from './SettingsTab';
 import { SoundsTab } from './SoundsTab';
 import { WelcomeTab } from './WelcomeTab';
+import { ProjectsPanel } from '../tidalwaves/ProjectsPanel.jsx';
+import { SaveButton } from '../tidalwaves/SaveButton.jsx';
+import { RecordButton } from '../tidalwaves/RecordButton.jsx';
 
 const TAURI = typeof window !== 'undefined' && window.__TAURI__;
 
@@ -152,6 +155,8 @@ function MainMenu({ context, isEmbedded = false, className }) {
           <span>share</span>
         </button>
       )}
+      {!isEmbedded && <SaveButton context={context} />}
+      {!isEmbedded && <RecordButton context={context} />}
       {!isEmbedded && (
         <a
           title="learn"
@@ -231,6 +236,7 @@ export function RightPanel({ context }) {
 
 const tabNames = {
   welcome: 'intro',
+  projects: 'projects',
   patterns: 'patterns',
   sounds: 'sounds',
   reference: 'reference',
@@ -263,6 +269,8 @@ function PanelNav({ children, className, ...props }) {
 function PanelContent({ context, tab }) {
   useLogger();
   switch (tab) {
+    case tabNames.projects:
+      return <ProjectsPanel context={context} />;
     case tabNames.patterns:
       return <PatternsTab context={context} />;
     case tabNames.console:

@@ -242,6 +242,33 @@ export function useReplContext() {
       editorRef.current.repl.scheduler.stop();
     });
   };
+  // Renders the currently playing pattern offline to a WAV Blob (reuses the same
+  // OfflineAudioContext path as handleExport/"Export to WAV") instead of downloading
+  // it, so callers (e.g. a "record to server" button) can upload the Blob themselves.
+  const handleRecord = async (begin, end, sampleRate, maxPolyphony, multiChannelOrbits) => {
+    await editorRef.current.evaluate(false);
+    editorRef.current.repl.scheduler.stop();
+    return renderPatternAudio(
+      editorRef.current.repl.state.pattern,
+      editorRef.current.repl.scheduler.cps,
+      begin,
+      end,
+      sampleRate,
+      maxPolyphony,
+      multiChannelOrbits,
+      undefined,
+      { download: false },
+    ).finally(async () => {
+      const { latestCode, maxPolyphony, audioDeviceName, multiChannelOrbits } = settingsMap.get();
+      await initAudio({
+        latestCode,
+        maxPolyphony,
+        audioDeviceName,
+        multiChannelOrbits,
+      });
+      editorRef.current.repl.scheduler.stop();
+    });
+  };
   const handleShuffle = async () => {
     const patternData = await getRandomTune();
     const code = patternData.code;
@@ -271,6 +298,7 @@ export function useReplContext() {
     handleShare,
     handleEvaluate,
     handleExport,
+    handleRecord,
     init,
     error,
     editorRef,

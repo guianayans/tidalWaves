@@ -7,9 +7,10 @@ Ao criar um app novo, escolha a **próxima porta livre** e registre aqui.
 | 4015 | ComfyUI Flux | `flux` | `flux.gvtserver.online` |
 | 4020 | Downloader / Analyser | `downloader` | `downloader.gvtserver.online` |
 | 4021 | GVT Remote (MeshCentral) | `remote` | `remote.gvtserver.online` |
-| **4022** | *(próxima sugerida)* | — | — |
 | 4022 | *(reservada)* | — | — |
 | 4023 | *(reservada)* | — | — |
+| 4025 | tidalWaves (Strudel live-coding) | `tidalwaves` | `tidalwaves.gvtserver.online` |
+| **4026** | *(próxima sugerida)* | — | — |
 
 ## Regra
 

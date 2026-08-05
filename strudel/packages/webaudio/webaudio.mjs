@@ -46,6 +46,7 @@ export async function renderPatternAudio(
   maxPolyphony,
   multiChannelOrbits,
   downloadName = undefined,
+  { download = true } = {},
 ) {
   let audioContext = getAudioContext();
   await audioContext.close();
@@ -85,15 +86,18 @@ export async function renderPatternAudio(
     .then((renderedBuffer) => {
       const wavBuffer = audioBufferToWav(renderedBuffer);
       const blob = new Blob([wavBuffer], { type: 'audio/wav' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      downloadName = downloadName ? `${downloadName}.wav` : `${new Date().toISOString()}.wav`;
-      a.download = `${downloadName}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      if (download) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        downloadName = downloadName ? `${downloadName}.wav` : `${new Date().toISOString()}.wav`;
+        a.download = `${downloadName}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+      return blob;
     })
     .finally(async () => {
       setAudioContext(null);

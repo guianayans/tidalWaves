@@ -1,0 +1,55 @@
+# tidalWaves — Coolify + Traefik deploy config
+# Built as a single image (no /app bind-mount): the Astro site needs a real
+# build step (pnpm install + astro build), so the image is baked with the
+# compiled output rather than running interpreted source off a host mount.
+# Only /data (SQLite db + recordings) is a persistent bind-mounted volume.
+
+services:
+  tidalwaves:
+    container_name: tidalwaves
+    build:
+      context: /pendriver/tidalwaves
+      dockerfile: Dockerfile
+    image: tidalwaves-local:latest
+    pull_policy: build
+    volumes:
+      - /pendriver/tidalwaves_hist:/data
+    environment:
+      NODE_ENV: production
+      PORT: "4025"
+      TIDALWAVES_DATA_DIR: /data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - '-e'
+        - "require('http').get('http://127.0.0.1:4025/health',r=>process.exit(r.statusCode>=200&&r.statusCode<500?0:1)).on('error',()=>process.exit(1));"
+      interval: 20s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+    networks:
+      - coolify
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    labels:
+      - traefik.enable=true
+      - 'traefik.http.routers.tidalwaves.rule=Host(`tidalwaves.gvtserver.online`) || Host(`www.tidalwaves.gvtserver.online`)'
+      - traefik.http.routers.tidalwaves.entrypoints=https
+      - traefik.http.services.tidalwaves.loadbalancer.server.port=4025
+      - 'traefik.http.routers.tidalwaves.middlewares=tidalwaves-sec'
+      - traefik.http.middlewares.tidalwaves-sec.headers.forceSTSHeader=true
+      - traefik.http.middlewares.tidalwaves-sec.headers.stsSeconds=31536000
+      - traefik.http.middlewares.tidalwaves-sec.headers.stsIncludeSubdomains=true
+      - traefik.http.middlewares.tidalwaves-sec.headers.stsPreload=true
+      - traefik.http.middlewares.tidalwaves-sec.headers.contentTypeNosniff=true
+      - traefik.http.middlewares.tidalwaves-sec.headers.referrerPolicy=strict-origin-when-cross-origin
+      - traefik.http.middlewares.tidalwaves-sec.headers.customResponseHeaders.X-Frame-Options=SAMEORIGIN
+      - traefik.http.middlewares.tidalwaves-sec.headers.customResponseHeaders.Cross-Origin-Resource-Policy=same-site
+      - 'traefik.http.middlewares.tidalwaves-sec.headers.customResponseHeaders.Permissions-Policy=camera=(), microphone=(), geolocation=()'
+
+networks:
+  coolify:
+    external: true

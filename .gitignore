@@ -1,0 +1,6 @@
+node_modules/
+server/node_modules/
+website-dist
+*.log
+.DS_Store
+/data/
