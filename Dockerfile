@@ -3,6 +3,9 @@
 # (2) install backend deps, (3) slim runtime with ffmpeg for recordings.
 
 FROM node:22-slim AS strudel-build
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends python3 make g++ git \
+  && rm -rf /var/lib/apt/lists/*
 RUN npm install -g pnpm
 WORKDIR /build
 COPY strudel/pnpm-workspace.yaml strudel/package.json strudel/pnpm-lock.yaml ./
@@ -16,6 +19,9 @@ COPY strudel/ .
 RUN npm run build
 
 FROM node:22-slim AS server-build
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends python3 make g++ \
+  && rm -rf /var/lib/apt/lists/*
 WORKDIR /build/server
 COPY server/package.json server/package-lock.json* ./
 RUN npm install --omit=dev
