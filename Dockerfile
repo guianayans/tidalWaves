@@ -31,9 +31,9 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends ffmpeg \
   && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-COPY --from=server-build /build/server/node_modules ./server/node_modules
 COPY server ./server
 COPY --from=strudel-build /build/website/dist ./website-dist
+COPY --from=server-build /build/server/node_modules ./server/node_modules
 ENV NODE_ENV=production
 EXPOSE 4025
 CMD ["node", "server/src/index.js"]

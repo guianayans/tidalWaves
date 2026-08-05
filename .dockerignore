@@ -1,0 +1,10 @@
+**/node_modules
+server/node_modules
+strudel/node_modules
+strudel/website/node_modules
+strudel/website/dist
+website-dist
+.git
+data
+*.log
+.DS_Store
